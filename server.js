@@ -11,19 +11,25 @@ const __dirname = path.dirname(__filename); // get the directory name of the cur
 
 console.log(__dirname, __filename); // log the directory name and file path to the console
 
-const server = http.createServer((req, res) =>{
+const server = http.createServer(async (req, res) =>{
    
     try{
         //check if the request is a GET request
         if(req.method === 'GET'){
             let filePath;
             if(req.url === '/'){
-              filePath = path.join(__dirname, 'index.html'); // set the file path to the index.html file
+              filePath = path.join(__dirname, 'public',  'index.html'); // set the file path to the index.html file
             }else if(req.url === '/about'){
-                
+                filePath = path.join(__dirname, 'public',  'about.html'); // set the file path to the index.html file
             }else{
-                
+                throw new Error('Page Not Found'); // throw an error if the page is not found
             }
+
+            const data = await fs.readFile(filePath);
+            res.setHeader('Content-Type', 'text/html');
+            res.write(data);
+            res.end(); // end the response automatically to when done
+
         }
         else{
             throw new Error('Method Not Allowed'); // throw an error if the request is not a GET request
