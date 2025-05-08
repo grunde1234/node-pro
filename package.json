@@ -1,0 +1,15 @@
+{
+  "name": "js-pro",
+  "version": "1.0.0",
+  "description": "node.js codeing",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon --env-file=.env server.js"
+  },
+  "author": "Okafor Ebuka",
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
