@@ -8,10 +8,10 @@ A short description of your Node.js project and its purpose.
 
  Clone the repository:
 
-   ```bash
+   ```bash```
    git clone https://github.com/grunde1234/node-pro.git
    cd node-pro
-  ```
+  
 
 ## Install node
 Install node run command below to get dependencies
