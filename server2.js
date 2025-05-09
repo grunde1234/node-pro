@@ -15,6 +15,8 @@ const logger = (req, res, next) => {
     next(); // call the next middleware function
 }
 
+//in the POST request we need to parse the body of the request and then we can use it in the createUserHandler function to update memory
+
 //JSON middleware
 const jsonMiddleware = (req, res, next)=>{
     res.writeHead(200, {'Content-Type': 'application/json'}); // set the status code and content type of the response
@@ -41,21 +43,46 @@ const getUserByIdHandler = (req, res) => {
     } */
 }
 
+//route handler for a POST
+const createUserHandler = (req, res) => {
+    let body = '';
+    //Listen for data event 
+    req.on('data', chunk => {
+        body += chunk.toString(); // convert the buffer to a string 
+
+    });
+
+    req.on('end', () => {
+        const newUser = JSON.parse(body); // parse the JSON string to an object
+        users.push(newUser); // add the new user to the users array
+        res.statusCode = 201;
+        res.write(JSON.stringify(newUser)); // send the response to the client
+        res.end(); // end the response automatically to when done
+    })
+}
+
 //not found
 const notFoundHandler = (req, res) => {
-    res.writeHead(404, { 'Content-Type': 'application/json' }); // use writeHead, not setHeader for status
-    res.end(JSON.stringify({ message: "Not Found" })); // wrap message in JSON.stringify
+    res.statusCode = 404
+    res.write(JSON.stringify({ message: "Not Found" })) // use writeHead, not setHeader for status
+    res.end(); // wrap message in JSON.stringify
 }
 
 const server = createServer((req, res) => {
     logger(req, res, () => {
       jsonMiddleware(req, res, () => {
-        if(req.url === 'api/users'  && req.method === 'GET'){
+        if(req.url === '/api/users'  && req.method === 'GET'){
             getUsersHandler(req, res); // call the getUsersHandler function
         }
-        else if(req.url.match(/\api\/users\/([0-9]+)/) && req.method === 'GET'){
+        else if(req.url.match(/\/api\/users\/([0-9]+)/) && req.method === 'GET'){
             getUserByIdHandler(req, res); // call the getUserByIdHandler function
 
+        }
+        else if(req.url === '/api/users' && req.method === 'POST'){
+            createUserHandler(req, res)
+        }
+        else{
+            notFoundHandler(req, res);
         }
     });
     }); // call the logger middleware function
@@ -74,3 +101,9 @@ server.listen(PORT, () => {
 server.listen(PORT,()=>{
     console.log(`Server is running on port ${PORT}`); // log the server status to the console
 }) */
+
+//for the post requset normally we dont create a body because it is automatically created by the client but in this case we create the body and then the raw on the postman 
+
+/* with createUserHandler we create the body and then the raw on the postman*/
+
+//and the response is in JSON format so we set the content type to application/json and the status code to 201 for created
